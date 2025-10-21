@@ -1,0 +1,10 @@
+# Node.js bağımlılıkları
+node_modules/
+
+# React build çıktıları
+build/
+dist/
+
+# Environment dosyaları
+.env
+.env.local
