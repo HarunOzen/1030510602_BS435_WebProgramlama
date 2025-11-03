@@ -17,9 +17,14 @@ function App() {
   const [gameResult, setGameResult] = useState(false);
 
   // 1. StartScreen'den çağrılacak ve oyunu 'playing' durumuna geçirecek fonksiyon
-  const handleStartGame = () => {
-    setGameState('playing');
-  };
+const handleStartGame = (modeName) => { // <-- Gelen 'modeName' parametresini ekledik
+  console.log("Seçilen mod:", modeName); // <-- Hangi modun seçildiğini görmek için
+  
+  // Buraya daha sonra seçilen moda göre farklı oyun ekranları
+  // yüklemek için mantık ekleyebiliriz.
+  
+  setGameState('playing');
+};
 
   // 2. GameScreen'den çağrılacak ve oyunu 'result' durumuna geçirecek fonksiyon
   const handleGameEnd = (success) => {

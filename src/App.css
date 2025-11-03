@@ -5,7 +5,8 @@
 }
 
 .App-header {
-  background-color: #282c34;
+ /* Onların yerine bu tek satırı EKLE: */
+background-color: #007ACC; /* VS Code'un ikonik mavi rengi */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -13,4 +14,106 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  position: relative;
+}
+/* src/App.css dosyasının en altına ekle */
+
+/* src/App.css dosyasındaki .mode-button kuralını bul ve GÜNCELLE */
+
+.mode-button {
+  /* Varsayılan çirkin buton stilini sıfırla */
+  background: transparent; 
+  border: 2px solid rgba(255, 255, 255, 0.7); 
+  color: rgba(255, 255, 255, 0.9); 
+  
+  /* --- YENİ EKLENECEK SATIRLAR --- */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* İkonu ve yazıyı birlikte ortalar */
+  /* --- YENİ SATIRLAR BİTTİ --- */
+
+  /* Boşluk ve Boyutlandırma */
+  padding: 12px 30px; 
+  margin: 12px 0; 
+  min-width: 280px; 
+  
+  /* Yazı Tipi ve Görünüm */
+  font-size: 1.25rem; 
+  font-weight: 500; 
+  border-radius: 50px; 
+  cursor: pointer; 
+  
+  /* Modern Geçiş Efekti (Hover için) */
+  transition: all 0.3s ease-out;
+}
+
+.mode-button:hover {
+  /* Üzerine gelince olacak modern efekt */
+  background: rgba(255, 255, 255, 0.15); /* Çok hafif bir beyaz parlama */
+  border-color: rgba(255, 255, 255, 1); /* Çerçeveyi tam beyaz yap */
+  color: #ffffff; /* Yazıyı tam beyaz yap */
+  
+  /* Küçük bir "kalkma" efekti */
+  transform: translateY(-3px); 
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+/* src/App.css dosyasının en altına ekle */
+
+.guide-button {
+  /* Konumlandırma: Sağ üst köşe */
+  position: absolute; /* Akıştan çıkarır, ortalamayı bozmaz */
+  top: 25px;          /* Yukarıdan 25px boşluk */
+  right: 30px;         /* Sağdan 30px boşluk */
+  
+  /* İkon ve yazıyı yan yana hizala */
+  display: flex;
+  align-items: center;
+  
+  /* Modern Görünüm */
+  background-color: rgba(255, 255, 255, 0.1); /* Sisli arka plana uygun hafif parlaklık */
+  color: rgba(255, 255, 255, 0.8);
+  padding: 10px 15px;
+  border-radius: 20px; /* Modern yuvarlak kenar */
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guide-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* İkon (svg) ile yazı (span) arasına biraz boşluk koy */
+.guide-button svg {
+  margin-right: 8px;
+}
+/* src/App.css dosyasının en altına ekle */
+
+/* Mod butonlarının içindeki ikonlara (svg) stil ver */
+/* Mod butonlarının içindeki ikonlara (svg) stil ver */
+/* Mod butonlarının içindeki ikonlara (svg) stil ver */
+.mode-button svg {
+  margin-right: 12px;  /* Yazı ile boşluğu biraz artır */
+  font-size: 1.4rem;   /* İkonları daha BÜYÜK yap */
+  
+  /* Dikey hizalamayı mükemmelleştir */
+  position: relative;
+  top: 1px; 
+}
+/* src/App.css dosyasının en altına ekle */
+
+/* --- İkonlara Canlı Renkler Ver --- */
+
+.tek-atis svg {
+  color: #ff5252; /* Canlı, parlak bir Kırmızı */
+}
+
+.zamanla-yaris svg {
+  color: #ffc107; /* Canlı, parlak bir Sarı/Altın */
+}
+
+.sinirlarini-as svg {
+  color: #00e676; /* Canlı, parlak bir Yeşil */
 }
