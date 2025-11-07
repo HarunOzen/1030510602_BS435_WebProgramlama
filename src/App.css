@@ -117,3 +117,42 @@ background-color: #007ACC; /* VS Code'un ikonik mavi rengi */
 .sinirlarini-as svg {
   color: #00e676; /* Canlı, parlak bir Yeşil */
 }
+/* src/App.css dosyasının en altına ekle */
+
+/* 3 kartı yatayda tutacak container */
+.game-container {
+  display: flex;
+  flex-wrap: wrap; /* Küçük ekranlarda alta sarsın */
+  justify-content: center; /* Kartları yatayda ortala */
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Resimlerin içine konulacağı kart component'i */
+.image-card {
+  width: 250px;
+  height: 250px;
+  background-color: rgba(0, 0, 0, 0.2); /* Arka plandan hafif koyu */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 15px; /* Modern yuvarlak kenarlar */
+  margin: 15px; /* Kartlar arası boşluk */
+
+  /* İçindeki "Resim Yeri" yazısını ortalamak için */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.2rem;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Kartların üzerine gelince modern bir efekt ver */
+.image-card:hover {
+  transform: translateY(-5px); /* Hafifçe yukarı kalksın */
+  border-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
