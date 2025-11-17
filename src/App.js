@@ -1,61 +1,61 @@
 // src/App.js
-
-import React, { useState } from 'react'; // 'useState' hook'unu import ettik
+import React, { useState } from 'react';
 import './App.css';
 
-// Yeni oluşturduğumuz component'leri import ediyoruz
 import StartScreen from './components/StartScreen';
 import GameScreen from './components/GameScreen';
 import ResultScreen from './components/ResultScreen';
 
 function App() {
-  // Oyunun o anki durumunu (hangi ekranda olduğumuzu) tutmak için bir "state" (durum) tanımlıyoruz.
-  // 3 durumumuz olacak: 'start', 'playing', 'result'
-  const [gameState, setGameState] = useState('start'); // Oyun 'start' ekranıyla başlasın
-
-  // Son oyunun sonucunu (başarılı/başarısız) tutmak için bir state
+  const [gameState, setGameState] = useState('start'); 
   const [gameResult, setGameResult] = useState(false);
 
-  // 1. StartScreen'den çağrılacak ve oyunu 'playing' durumuna geçirecek fonksiyon
-const handleStartGame = (modeName) => { // <-- Gelen 'modeName' parametresini ekledik
-  console.log("Seçilen mod:", modeName); // <-- Hangi modun seçildiğini görmek için
-  
-  // Buraya daha sonra seçilen moda göre farklı oyun ekranları
-  // yüklemek için mantık ekleyebiliriz.
-  
-  setGameState('playing');
-};
+  // Oyunu başlatan fonksiyon (StartScreen'den gelir)
+  const handleStartGame = (modeName) => {
+    console.log("Seçilen mod:", modeName);
+    setGameState('playing');
+  };
 
-  // 2. GameScreen'den çağrılacak ve oyunu 'result' durumuna geçirecek fonksiyon
+  // Oyun bittiğinde çağrılan fonksiyon (GameScreen'den gelir)
   const handleGameEnd = (success) => {
-    setGameResult(success); // Başarı durumunu kaydet
-    setGameState('result'); // Ekranı 'result' olarak değiştir
+    setGameResult(success);
+    setGameState('result');
   };
-
-  // 3. ResultScreen'den çağrılacak ve oyunu yeniden başlatacak fonksiyon
+  
+  // Sonuç ekranından yeniden başlatma (ResultScreen'den gelir)
   const handleRestart = () => {
-    setGameState('playing'); // Oyunu tekrar 'playing' ekranına al
+    setGameState('playing');
   };
 
-  // Hangi ekranın gösterileceğine karar veren fonksiyon
+  // --- YENİ: Ana Menüye Dönüş Fonksiyonu ---
+  const handleBackToMenu = () => {
+    setGameState('start'); 
+    setGameResult(false);  
+  };
+
   const renderScreen = () => {
     if (gameState === 'start') {
-      // 'onStartGame' prop'u olarak handleStartGame fonksiyonumuzu StartScreen'e gönderiyoruz
       return <StartScreen onStartGame={handleStartGame} />;
     } 
     else if (gameState === 'playing') {
-      return <GameScreen onGameEnd={handleGameEnd} />;
+      // GameScreen'e onBackToMenu prop'unu ekledik
+      return <GameScreen 
+               onGameEnd={handleGameEnd} 
+               onBackToMenu={handleBackToMenu} 
+             />;
     } 
     else if (gameState === 'result') {
-      return <ResultScreen success={gameResult} onRestart={handleRestart} />;
+      // ResultScreen'e onBackToMenu prop'unu ekledik
+      return <ResultScreen 
+               success={gameResult} 
+               onRestart={handleRestart} 
+               onBackToMenu={handleBackToMenu} 
+             />;
     }
   };
 
   return (
     <div className="App">
-      {/* renderScreen() fonksiyonu o anki duruma (state) göre 
-        doğru component'i (StartScreen, GameScreen, veya ResultScreen) buraya yerleştirecek.
-      */}
       {renderScreen()}
     </div>
   );

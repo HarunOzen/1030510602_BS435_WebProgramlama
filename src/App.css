@@ -156,3 +156,35 @@ background-color: #007ACC; /* VS Code'un ikonik mavi rengi */
   background-color: rgba(0, 0, 0, 0.3);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
+/* --- App.css dosyasının EN ALTINA ekle --- */
+
+.home-button {
+  /* Konumlandırma: Sol üst köşe */
+  position: absolute;
+  top: 25px;
+  left: 30px; 
+  
+  /* Görünüm */
+  display: flex;
+  align-items: center;
+  
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10; /* Diğer öğelerin üstünde durması için */
+}
+
+.home-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.home-button svg {
+  margin-right: 8px;
+  font-size: 1.1rem;
+}

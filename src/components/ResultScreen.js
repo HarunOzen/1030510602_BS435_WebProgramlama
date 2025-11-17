@@ -1,19 +1,27 @@
 // src/components/ResultScreen.js
 import React from 'react';
+import { FaHome } from 'react-icons/fa'; // İkonu import ettik
 
-function ResultScreen({ success, onRestart }) {
+// onBackToMenu prop'unu buraya ekledik
+function ResultScreen({ success, onRestart, onBackToMenu }) {
   return (
     <div className="App-header">
+      
+      {/* --- Ana Menü Butonu (Sol Üst) --- */}
+      <div className="home-button" onClick={onBackToMenu}>
+        <FaHome /> 
+        <span>Ana Menü</span>
+      </div>
 
-      {/* Gelen sonuca (success) göre farklı mesaj göster */}
       {success ? (
         <h1>Tebrikler! Doğru Tahmin.</h1>
       ) : (
         <h1>Maalesef! Bu sefer olmadı.</h1>
       )}
-
-      {/* Yeniden başlatma seçeneği sun  */}
-      <button onClick={onRestart}>Yeni Tur</button>
+      
+      <button className="mode-button" onClick={onRestart} style={{ minWidth: '200px' }}>
+        Yeni Tur
+      </button>
     </div>
   );
 }
