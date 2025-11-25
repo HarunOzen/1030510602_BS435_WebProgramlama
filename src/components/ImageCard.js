@@ -1,16 +1,17 @@
 // src/components/ImageCard.js
 import React from 'react';
 
-// Bu, resimlerin içine konulacağı kart component'idir.
-// 'onClick' prop'u sayesinde, tıklandığında GameScreen'e haber verecek.
-function ImageCard({ onClick }) {
+// 'imgSrc' adında yeni bir prop alıyoruz (Resmin adresi)
+function ImageCard({ onClick, imgSrc }) {
   return (
-    // Tıklandığında 'onClick' fonksiyonunu tetikle
     <div className="image-card" onClick={onClick}>
-
-      {/* Daha sonra buraya <img /> etiketi gelecek */}
-      <p>Resim Yeri</p>
-
+      
+      {/* Artık <p> yerine <img> etiketi kullanıyoruz.
+         src={imgSrc}: Resmin adresi yukarıdan geliyor.
+         alt="Oyun Görseli": Resim yüklenemezse görünecek yazı.
+      */}
+      <img src={imgSrc} alt="Oyun Görseli" />
+      
     </div>
   );
 }

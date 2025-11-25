@@ -188,3 +188,13 @@ background-color: #007ACC; /* VS Code'un ikonik mavi rengi */
   margin-right: 8px;
   font-size: 1.1rem;
 }
+/* src/App.css en altına ekle */
+
+/* Kartın içindeki resmin stili */
+.image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Resmi kutuya sığdırırken oranını bozma (kırp) */
+  border-radius: 12px; /* Kartın yuvarlak köşelerine uyum sağla */
+  display: block; /* Alt kısımdaki minik boşluğu engelle */
+}
