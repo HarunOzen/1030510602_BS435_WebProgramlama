@@ -198,3 +198,141 @@ background-color: #007ACC; /* VS Code'un ikonik mavi rengi */
   border-radius: 12px; /* Kartın yuvarlak köşelerine uyum sağla */
   display: block; /* Alt kısımdaki minik boşluğu engelle */
 }
+/* src/App.css en altına ekle */
+
+/* src/App.css - GÜNCELLENMİŞ KOMPAKT MODAL */
+
+/* --- 1. Overlay (Arka Plan) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Arka planı hafifçe karart */
+  display: flex;
+  justify-content: center; /* Yatay ortala */
+  align-items: center;     /* Dikey ortala */
+  z-index: 1000;
+}
+
+/* --- 2. Modal Content (Pencere) --- */
+.modal-content {
+  /* VS Code tarzı koyu gri arka plan */
+  background-color: #1e1e1e; 
+  /* Projenin mavi rengiyle ince bir çerçeve */
+  border: 1px solid #007ACC; 
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Gölge */
+  
+  /* DAHA KÜÇÜK BOYUTLAR */
+  width: 90%;
+  max-width: 450px; /* Genişliği kısıtladık (Daha kibar durur) */
+  max-height: 80vh; /* Ekranın %80'inden uzun olmasın */
+  
+  border-radius: 8px; /* Daha keskin, teknik köşeler */
+  display: flex;
+  flex-direction: column; /* Başlık ve İçeriği alt alta diz */
+  animation: popIn 0.3s ease-out; /* Hafifçe büyüme efekti */
+}
+
+/* --- 3. Header (Sabit Başlık) --- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #252526; /* Başlık bir ton daha açık gri */
+  border-bottom: 1px solid #333;
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.2rem; /* Başlık boyutu küçüldü */
+  color: #007ACC; /* VS Code Mavisi */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- 4. Body (Kaydırılabilir İçerik) --- */
+.modal-body {
+  padding: 20px;
+  text-align: left;
+  color: #cccccc; /* Okunabilir açık gri yazı */
+  font-size: 0.95rem; /* Yazı boyutu ideal seviyede */
+  line-height: 1.5;
+  
+  /* Kaydırma Ayarları */
+  overflow-y: auto; /* Sadece bu kısım kayar */
+}
+
+/* Kaydırma Çubuğu (Scrollbar) - İnce ve Mavi */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: #007ACC;
+  border-radius: 3px;
+}
+.modal-body::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+/* --- 5. İçerik Detayları --- */
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+}
+
+.rules-list li {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #333; /* Altlarına ince çizgi */
+  padding-bottom: 10px;
+}
+
+.rules-list li:last-child {
+  border-bottom: none;
+}
+
+.rules-list strong {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+/* İkon Renkleri */
+.icon-red { color: #ff6b6b; }
+.icon-yellow { color: #feca57; }
+.icon-green { color: #1dd1a1; }
+
+.tips {
+  margin-top: 15px;
+  background-color: rgba(0, 122, 204, 0.15); /* Çok hafif mavi zemin */
+  border-left: 3px solid #007ACC;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.close-button:hover {
+  opacity: 1;
+  color: #ff5252;
+}
+
+/* --- Animasyon --- */
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
