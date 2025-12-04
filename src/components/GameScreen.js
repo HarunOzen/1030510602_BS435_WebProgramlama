@@ -5,12 +5,32 @@ import { FaHome, FaClock, FaPlay } from 'react-icons/fa';
 
 // Resim havuzu (Daha sonra burası genişletilebilir)
 const IMAGES = [
+  // --- Doğa ve Manzara ---
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&q=80",
+  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=500&q=80",
+  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&q=80",
+  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500&q=80",
+  "https://images.unsplash.com/photo-1501854140884-074bf86ee91c?w=500&q=80",
+  
+  // --- Fütüristik ve Neon (AI Havası Verenler) ---
+  "https://images.unsplash.com/photo-1535378437327-10ff2894544f?w=500&q=80",
+  "https://images.unsplash.com/photo-1614728853913-1e221a658510?w=500&q=80",
+  "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80",
+  "https://images.unsplash.com/photo-1515630278258-407f66498911?w=500&q=80",
+  "https://images.unsplash.com/photo-1563089145-599997674d42?w=500&q=80",
+
+  // --- Portre ve İnsan ---
+  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=80",
+  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=80",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=80",
+  
+  // --- Nesneler ve Mimari ---
   "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80",
   "https://images.unsplash.com/photo-1596854703505-a10565135156?w=500&q=80",
-  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=500&q=80",
-  "https://images.unsplash.com/photo-1501854140884-074bf86ee91c?w=500&q=80",
-  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&q=80"
+  "https://images.unsplash.com/photo-1480796927426-f609979314bd?w=500&q=80",
+  "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80",
+  "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80"
 ];
 
 function GameScreen({ onGameEnd, onBackToMenu, mode }) {
