@@ -7,30 +7,30 @@ import GameScreen from './components/GameScreen';
 import ResultScreen from './components/ResultScreen';
 
 function App() {
-  const [gameState, setGameState] = useState('start'); 
-  const [gameResult, setGameResult] = useState(false);
+  const [gameState, setGameState] = useState('start');
+  const [selectedMode, setSelectedMode] = useState(null); // Seçilen modu tutmak için
+  const [gameStats, setGameStats] = useState({ correct: 0, wrong: 0 }); // Sonuç istatistikleri
 
-  // Oyunu başlatan fonksiyon (StartScreen'den gelir)
+  // Oyunu başlatan fonksiyon
   const handleStartGame = (modeName) => {
     console.log("Seçilen mod:", modeName);
+    setSelectedMode(modeName); // Modu kaydet
     setGameState('playing');
   };
 
-  // Oyun bittiğinde çağrılan fonksiyon (GameScreen'den gelir)
-  const handleGameEnd = (success) => {
-    setGameResult(success);
+  // Oyun bittiğinde çağrılan fonksiyon (Artık istatistikleri de alıyor)
+  const handleGameEnd = (stats) => {
+    setGameStats(stats); // İstatistikleri kaydet
     setGameState('result');
   };
   
-  // Sonuç ekranından yeniden başlatma (ResultScreen'den gelir)
   const handleRestart = () => {
     setGameState('playing');
   };
 
-  // --- YENİ: Ana Menüye Dönüş Fonksiyonu ---
   const handleBackToMenu = () => {
     setGameState('start'); 
-    setGameResult(false);  
+    setGameStats({ correct: 0, wrong: 0 });  
   };
 
   const renderScreen = () => {
@@ -38,16 +38,17 @@ function App() {
       return <StartScreen onStartGame={handleStartGame} />;
     } 
     else if (gameState === 'playing') {
-      // GameScreen'e onBackToMenu prop'unu ekledik
+      // GameScreen'e seçilen modu gönderiyoruz (selectedMode)
       return <GameScreen 
+               mode={selectedMode}
                onGameEnd={handleGameEnd} 
                onBackToMenu={handleBackToMenu} 
              />;
     } 
     else if (gameState === 'result') {
-      // ResultScreen'e onBackToMenu prop'unu ekledik
+      // ResultScreen'e istatistikleri gönderiyoruz (stats)
       return <ResultScreen 
-               success={gameResult} 
+               stats={gameStats} 
                onRestart={handleRestart} 
                onBackToMenu={handleBackToMenu} 
              />;

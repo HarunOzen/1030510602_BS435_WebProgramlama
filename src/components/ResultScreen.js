@@ -1,26 +1,45 @@
 // src/components/ResultScreen.js
 import React from 'react';
-import { FaHome } from 'react-icons/fa'; // İkonu import ettik
+import { FaHome, FaCheckCircle, FaTimesCircle, FaTrophy } from 'react-icons/fa';
 
-// onBackToMenu prop'unu buraya ekledik
-function ResultScreen({ success, onRestart, onBackToMenu }) {
+function ResultScreen({ stats, onRestart, onBackToMenu }) {
+  // stats: { correct: 5, wrong: 2 } gibi bir obje geliyor
+
   return (
     <div className="App-header">
       
-      {/* --- Ana Menü Butonu (Sol Üst) --- */}
       <div className="home-button" onClick={onBackToMenu}>
-        <FaHome /> 
-        <span>Ana Menü</span>
+        <FaHome /> <span>Ana Menü</span>
       </div>
 
-      {success ? (
-        <h1>Tebrikler! Doğru Tahmin.</h1>
-      ) : (
-        <h1>Maalesef! Bu sefer olmadı.</h1>
-      )}
+      <FaTrophy style={{ fontSize: '4rem', color: '#ffc107', marginBottom: '20px' }} />
       
-      <button className="mode-button" onClick={onRestart} style={{ minWidth: '200px' }}>
-        Yeni Tur
+      <h1>Süre Doldu!</h1>
+      
+      <div className="stats-container">
+        <div className="stat-box correct">
+            <FaCheckCircle />
+            <div>
+                <h3>Doğru</h3>
+                <span>{stats.correct}</span>
+            </div>
+        </div>
+
+        <div className="stat-box wrong">
+            <FaTimesCircle />
+            <div>
+                <h3>Yanlış</h3>
+                <span>{stats.wrong}</span>
+            </div>
+        </div>
+      </div>
+      
+      <div className="total-score">
+         Toplam Skor: <strong>{stats.correct * 10 - stats.wrong * 5}</strong>
+      </div>
+
+      <button className="mode-button" onClick={onRestart} style={{ minWidth: '200px', marginTop: '30px' }}>
+        Tekrar Oyna
       </button>
     </div>
   );
