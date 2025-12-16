@@ -3,107 +3,122 @@ import React, { useState, useEffect } from 'react';
 import ImageCard from './ImageCard';
 import { FaHome, FaClock, FaPlay } from 'react-icons/fa';
 
-// Resim havuzu (Daha sonra burası genişletilebilir)
-const IMAGES = [
-  // --- Doğa ve Manzara ---
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&q=80",
-  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=500&q=80",
-  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&q=80",
-  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500&q=80",
-  "https://images.unsplash.com/photo-1501854140884-074bf86ee91c?w=500&q=80",
-  
-  // --- Fütüristik ve Neon (AI Havası Verenler) ---
-  "https://images.unsplash.com/photo-1535378437327-10ff2894544f?w=500&q=80",
-  "https://images.unsplash.com/photo-1614728853913-1e221a658510?w=500&q=80",
-  "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80",
-  "https://images.unsplash.com/photo-1515630278258-407f66498911?w=500&q=80",
-  "https://images.unsplash.com/photo-1563089145-599997674d42?w=500&q=80",
+// --- GÖRSEL HAVUZU OLUŞTURMA ---
 
-  // --- Portre ve İnsan ---
-  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=80",
-  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=80",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80",
-  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=80",
-  
-  // --- Nesneler ve Mimari ---
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80",
-  "https://images.unsplash.com/photo-1596854703505-a10565135156?w=500&q=80",
-  "https://images.unsplash.com/photo-1480796927426-f609979314bd?w=500&q=80",
-  "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80",
-  "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80"
-];
+// Yardımcı fonksiyon: Belirtilen sayı kadar resim yolunu diziye atar
+// Örn: createPathArray('ai', 3) -> ['/assets/ai/1.jpg', '/assets/ai/2.jpg', '/assets/ai/3.jpg']
+const createPathArray = (folder, count) => {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    src: `/assets/${folder}/${i + 1}.jpg`,
+    isAi: folder === 'ai' // Bu resmin AI olup olmadığını etiketliyoruz
+  }));
+};
+
+// 100 tane AI, 50 tane Gerçek görsel olduğunu varsayıyoruz
+const AI_IMAGES = createPathArray('ai', 100);
+const REAL_IMAGES = createPathArray('real', 50);
+
+// Tüm görselleri tek havuzda birleştiriyoruz (Şimdilik karıştırmadan)
+const ALL_IMAGES = [...AI_IMAGES, ...REAL_IMAGES];
 
 function GameScreen({ onGameEnd, onBackToMenu, mode }) {
   
-  // Sadece "Zamanla Yarış" modu için gerekli state'ler
   const isTimeAttack = mode === 'Zamanla Yarış';
   
-  const [timeLeft, setTimeLeft] = useState(20); // 20 Saniye
-  const [gameActive, setGameActive] = useState(false); // Oyun başladı mı?
-  const [stats, setStats] = useState({ correct: 0, wrong: 0 }); // Anlık skor
-  const [feedback, setFeedback] = useState(""); // "Doğru!" veya "Yanlış!" yazısı
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [gameActive, setGameActive] = useState(false);
+  const [stats, setStats] = useState({ correct: 0, wrong: 0 });
+  const [feedback, setFeedback] = useState("");
   
-  // Ekranda gösterilecek 3 resim (Şimdilik rastgele seçiyoruz)
-  const [currentImages, setCurrentImages] = useState(IMAGES.slice(0, 3));
+  // Ekranda gösterilecek 3 resim (State)
+  const [currentRoundImages, setCurrentRoundImages] = useState([]);
 
-  // --- ZAMANLAYICI MANTIĞI ---
+  // --- OYUN BAŞLADIĞINDA VE TUR YENİLENDİĞİNDE ---
+  useEffect(() => {
+    // Eğer mod Zamanla Yarış DEĞİLSE, sayfa açılır açılmaz resimleri yükle
+    if (!isTimeAttack) {
+      startNewRound();
+    }
+    // eslint-disable-next-line
+  }, [isTimeAttack]);
+
+  // --- ZAMANLAYICI ---
   useEffect(() => {
     let interval = null;
-    
-    // Eğer oyun aktifse ve süre bitmediyse sayacı çalıştır
     if (isTimeAttack && gameActive && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
+        setTimeLeft((prev) => prev - 1);
       }, 1000);
-    } 
-    // Süre bittiğinde
-    else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && isTimeAttack) {
       clearInterval(interval);
       setGameActive(false);
-      onGameEnd(stats); // Sonuçları gönder ve bitir
+      onGameEnd(stats);
     }
-
     return () => clearInterval(interval);
   }, [gameActive, timeLeft, isTimeAttack, onGameEnd, stats]);
 
-  // --- OYUNU BAŞLATMA ---
+
+  // --- YENİ TUR BAŞLATMA (Resim Seçme Mantığı) ---
+  const startNewRound = () => {
+    // 1. Rastgele 1 tane AI görseli seç
+    const randomAi = AI_IMAGES[Math.floor(Math.random() * AI_IMAGES.length)];
+    
+    // 2. Rastgele 2 tane Gerçek görsel seç
+    // (Aynı görselin gelmemesi için basit bir karıştırma yapıyoruz)
+    const shuffledReal = [...REAL_IMAGES].sort(() => 0.5 - Math.random());
+    const randomReal1 = shuffledReal[0];
+    const randomReal2 = shuffledReal[1];
+
+    // 3. Bu üçünü birleştir ve karıştır (Ki AI hep başta çıkmasın)
+    const roundImages = [randomAi, randomReal1, randomReal2].sort(() => 0.5 - Math.random());
+    
+    setCurrentRoundImages(roundImages);
+  };
+
+  // --- OYUNU BAŞLAT (Zamanla Yarış İçin) ---
   const handleStartTimer = () => {
     setGameActive(true);
     setStats({ correct: 0, wrong: 0 });
     setFeedback("");
-    shuffleImages();
-  };
-
-  // --- RESİMLERİ KARIŞTIRMA (YENİ TUR) ---
-  const shuffleImages = () => {
-    // Basit bir karıştırma mantığı (Random 3 resim seç)
-    const shuffled = [...IMAGES].sort(() => 0.5 - Math.random());
-    setCurrentImages(shuffled.slice(0, 3));
+    startNewRound(); // İlk resimleri getir
   };
 
   // --- KART SEÇİMİ ---
-  const handleCardClick = (index) => {
-    // Eğer Zamanla Yarış ise ve oyun başlamadıysa tıklatmayalım
+  const handleCardClick = (selectedImage) => {
+    // Zamanla yarışta oyun başlamadıysa tıklanmasın
     if (isTimeAttack && !gameActive) return;
 
-    // --- BURADA DOĞRU/YANLIŞ MANTIĞI OLACAK ---
-    // Şimdilik 1. kartı (index 0) her zaman "Yapay Zeka" kabul edelim (Test için)
-    // Gerçekte backend'den gelen veriyle kontrol edilecek.
-    const isAi = index === 0; // Sadece örnek mantık!
-    
-    if (isAi) {
+    // --- DOĞRU/YANLIŞ KONTROLÜ ---
+    // Artık 'selectedImage.isAi' özelliği sayesinde gerçeği biliyoruz!
+    if (selectedImage.isAi) {
       setFeedback("✅ Doğru!");
       setStats(prev => ({ ...prev, correct: prev.correct + 1 }));
+      
+      // Tek Atış moduysa hemen bitir
+      if (!isTimeAttack) {
+         setTimeout(() => onGameEnd(true), 500);
+         return; 
+      }
+
     } else {
       setFeedback("❌ Yanlış!");
       setStats(prev => ({ ...prev, wrong: prev.wrong + 1 }));
+      
+      // Tek Atış moduysa hemen bitir (Kaybettin)
+      if (!isTimeAttack) {
+        setTimeout(() => onGameEnd(false), 500);
+        return;
+      }
     }
 
-    // Hemen yeni görselleri getir
-    setTimeout(() => {
-        setFeedback(""); // Yazıyı kısa süre sonra temizle
-        shuffleImages();
-    }, 500); // Yarım saniye bekleyip yenisini getir (kullanıcı sonucu görsün)
+    // Zamanla yarış modundaysak, yeni turu getir
+    if (isTimeAttack) {
+      setTimeout(() => {
+          setFeedback("");
+          startNewRound();
+      }, 500);
+    }
   };
 
   return (
@@ -113,15 +128,11 @@ function GameScreen({ onGameEnd, onBackToMenu, mode }) {
         <FaHome /> <span>Ana Menü</span>
       </div>
 
-      {/* --- ZAMANLA YARIŞ ÖZEL ALANI --- */}
       {isTimeAttack && (
         <div className="timer-container">
-            {/* Süre Göstergesi */}
             <div className={`timer-box ${timeLeft <= 5 ? 'danger' : ''}`}>
                 <FaClock /> {timeLeft}s
             </div>
-
-            {/* Başlat Butonu (Sadece oyun başlamadıysa görünür) */}
             {!gameActive && timeLeft > 0 && (
                 <div className="start-overlay">
                     <h2>Hazır mısın?</h2>
@@ -133,21 +144,21 @@ function GameScreen({ onGameEnd, onBackToMenu, mode }) {
         </div>
       )}
 
-      {/* Başlık (Oyun sırasında gizleyebiliriz veya küçük gösterebiliriz) */}
-      {!gameActive && <h1>{mode}</h1>}
+      {/* Başlık sadece oyun aktif değilse veya mod Tek Atış ise görünsün */}
+      {(!isTimeAttack || !gameActive) && <h1>{mode}</h1>}
       
-      {/* --- OYUN ALANI --- */}
-      <div className={`game-container ${!gameActive && isTimeAttack ? 'blurred' : ''}`}>
-        {currentImages.map((imgUrl, index) => (
+      <div className={`game-container ${(!gameActive && isTimeAttack) ? 'blurred' : ''}`}>
+        {/* Resimler henüz yüklenmediyse boş div dönmesin diye kontrol */}
+        {currentRoundImages.length > 0 && currentRoundImages.map((imgObj, index) => (
           <ImageCard 
             key={index} 
-            imgSrc={imgUrl} 
-            onClick={() => handleCardClick(index)} 
+            imgSrc={imgObj.src} 
+            // Tıklayınca tüm resim objesini gönderiyoruz (ki isAi kontrolü yapabilelim)
+            onClick={() => handleCardClick(imgObj)} 
           />
         ))}
       </div>
 
-      {/* --- ANLIK GERİ BİLDİRİM YAZISI --- */}
       <div className="feedback-text">
         {feedback}
       </div>

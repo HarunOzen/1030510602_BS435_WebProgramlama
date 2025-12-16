@@ -14,7 +14,7 @@ function ResultScreen({ stats, onRestart, onBackToMenu }) {
 
       <FaTrophy style={{ fontSize: '4rem', color: '#ffc107', marginBottom: '20px' }} />
       
-      <h1>Süre Doldu!</h1>
+      <h1>Süreniz dolmuştur!</h1>
       
       <div className="stats-container">
         <div className="stat-box correct">
