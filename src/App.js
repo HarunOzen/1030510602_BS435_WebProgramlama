@@ -8,19 +8,28 @@ import ResultScreen from './components/ResultScreen';
 
 function App() {
   const [gameState, setGameState] = useState('start');
-  const [selectedMode, setSelectedMode] = useState(null); // Seçilen modu tutmak için
-  const [gameStats, setGameStats] = useState({ correct: 0, wrong: 0 }); // Sonuç istatistikleri
+  const [selectedMode, setSelectedMode] = useState(null); 
+  
+  // İki farklı veri türünü tutmak için state'ler
+  const [gameStats, setGameStats] = useState({ correct: 0, wrong: 0 }); // Zamanla Yarış için
+  const [isSuccess, setIsSuccess] = useState(false); // Tek Atış için (True/False)
 
-  // Oyunu başlatan fonksiyon
   const handleStartGame = (modeName) => {
     console.log("Seçilen mod:", modeName);
-    setSelectedMode(modeName); // Modu kaydet
+    setSelectedMode(modeName); 
     setGameState('playing');
   };
 
-  // Oyun bittiğinde çağrılan fonksiyon (Artık istatistikleri de alıyor)
-  const handleGameEnd = (stats) => {
-    setGameStats(stats); // İstatistikleri kaydet
+  // Oyun bittiğinde gelen veriyi türüne göre ayırt et
+  const handleGameEnd = (data) => {
+    // Eğer gelen veri 'boolean' ise (True/False) -> Tek Atış modudur
+    if (typeof data === 'boolean') {
+        setIsSuccess(data);
+    } 
+    // Değilse (Obje ise) -> Zamanla Yarış modudur
+    else {
+        setGameStats(data);
+    }
     setGameState('result');
   };
   
@@ -30,7 +39,8 @@ function App() {
 
   const handleBackToMenu = () => {
     setGameState('start'); 
-    setGameStats({ correct: 0, wrong: 0 });  
+    setGameStats({ correct: 0, wrong: 0 });
+    setIsSuccess(false);
   };
 
   const renderScreen = () => {
@@ -38,7 +48,6 @@ function App() {
       return <StartScreen onStartGame={handleStartGame} />;
     } 
     else if (gameState === 'playing') {
-      // GameScreen'e seçilen modu gönderiyoruz (selectedMode)
       return <GameScreen 
                mode={selectedMode}
                onGameEnd={handleGameEnd} 
@@ -46,9 +55,11 @@ function App() {
              />;
     } 
     else if (gameState === 'result') {
-      // ResultScreen'e istatistikleri gönderiyoruz (stats)
+      // ResultScreen'e hem modu, hem başarı durumunu, hem de istatistikleri gönderiyoruz
       return <ResultScreen 
-               stats={gameStats} 
+               mode={selectedMode}    // <-- Hangi modda olduğumuzu gönderdik
+               success={isSuccess}    // <-- Tek Atış sonucu
+               stats={gameStats}      // <-- Zamanla Yarış sonucu
                onRestart={handleRestart} 
                onBackToMenu={handleBackToMenu} 
              />;

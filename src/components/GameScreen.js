@@ -10,14 +10,14 @@ import { FaHome, FaClock, FaPlay } from 'react-icons/fa';
 const createPathArray = (folder, count) => {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
-    src: `/assets/${folder}/${i + 1}.jpg`,
+    src: `/assets/${folder}/${i + 1}.png`,
     isAi: folder === 'ai' // Bu resmin AI olup olmadığını etiketliyoruz
   }));
 };
 
 // 100 tane AI, 50 tane Gerçek görsel olduğunu varsayıyoruz
-const AI_IMAGES = createPathArray('ai', 100);
-const REAL_IMAGES = createPathArray('real', 50);
+const AI_IMAGES = createPathArray('ai', 10);
+const REAL_IMAGES = createPathArray('real', 24);
 
 // Tüm görselleri tek havuzda birleştiriyoruz (Şimdilik karıştırmadan)
 const ALL_IMAGES = [...AI_IMAGES, ...REAL_IMAGES];

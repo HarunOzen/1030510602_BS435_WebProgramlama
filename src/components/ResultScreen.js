@@ -1,10 +1,44 @@
 // src/components/ResultScreen.js
 import React from 'react';
-import { FaHome, FaCheckCircle, FaTimesCircle, FaTrophy } from 'react-icons/fa';
+import { FaHome, FaCheckCircle, FaTimesCircle, FaTrophy, FaRedo } from 'react-icons/fa';
 
-function ResultScreen({ stats, onRestart, onBackToMenu }) {
-  // stats: { correct: 5, wrong: 2 } gibi bir obje geliyor
+function ResultScreen({ mode, success, stats, onRestart, onBackToMenu }) {
+  
+  // --- 1. DURUM: TEK ATIŞ MODU TASARIMI ---
+  if (mode === 'Tek Atış') {
+    return (
+        <div className="App-header">
+            <div className="home-button" onClick={onBackToMenu}>
+                <FaHome /> <span>Ana Menü</span>
+            </div>
 
+            {/* Büyük İkon (Doğruysa Yeşil Tik, Yanlışsa Kırmızı Çarpı) */}
+            <div style={{ fontSize: '5rem', marginBottom: '20px' }}>
+                {success ? 
+                    <FaCheckCircle style={{ color: '#00e676' }} /> : 
+                    <FaTimesCircle style={{ color: '#ff5252' }} />
+                }
+            </div>
+
+            {/* Başlık */}
+            <h1 style={{ fontSize: '3rem', margin: '10px 0' }}>
+                {success ? "TEBRİKLER!" : "MAALESEF!"}
+            </h1>
+
+            {/* Alt Açıklama */}
+            <p style={{ fontSize: '1.2rem', opacity: 0.8 }}>
+                {success ? "Yapay zekayı başarıyla tespit ettin." : "Yanlış görseli seçtin."}
+            </p>
+
+            {/* Tekrar Oyna Butonu */}
+            <button className="mode-button" onClick={onRestart} style={{ marginTop: '40px', minWidth: '220px' }}>
+                <FaRedo style={{ marginRight: '10px' }} /> Tekrar Oyna
+            </button>
+        </div>
+    );
+  }
+
+  // --- 2. DURUM: ZAMANLA YARIŞ (veya diğerleri) TASARIMI ---
   return (
     <div className="App-header">
       
@@ -14,7 +48,7 @@ function ResultScreen({ stats, onRestart, onBackToMenu }) {
 
       <FaTrophy style={{ fontSize: '4rem', color: '#ffc107', marginBottom: '20px' }} />
       
-      <h1>Süreniz dolmuştur!</h1>
+      <h1>Süre Doldu!</h1>
       
       <div className="stats-container">
         <div className="stat-box correct">
@@ -39,7 +73,7 @@ function ResultScreen({ stats, onRestart, onBackToMenu }) {
       </div>
 
       <button className="mode-button" onClick={onRestart} style={{ minWidth: '200px', marginTop: '30px' }}>
-        Tekrar Oyna
+        <FaRedo style={{ marginRight: '10px' }} /> Yeni Tur
       </button>
     </div>
   );
