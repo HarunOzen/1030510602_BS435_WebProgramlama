@@ -1,17 +1,15 @@
 // src/components/ImageCard.js
 import React from 'react';
 
-// 'imgSrc' adında yeni bir prop alıyoruz (Resmin adresi)
-function ImageCard({ onClick, imgSrc }) {
+// 'isDisabled' prop'unu ekledik
+function ImageCard({ onClick, imgSrc, isDisabled }) {
   return (
-    <div className="image-card" onClick={onClick}>
-      
-      {/* Artık <p> yerine <img> etiketi kullanıyoruz.
-         src={imgSrc}: Resmin adresi yukarıdan geliyor.
-         alt="Oyun Görseli": Resim yüklenemezse görünecek yazı.
-      */}
+    // Eğer kart disabled ise, 'disabled' CSS sınıfını ekle
+    <div className={`image-card ${isDisabled ? 'disabled' : ''}`} onClick={onClick}>
       <img src={imgSrc} alt="Oyun Görseli" />
-      
+
+      {/* Devre dışı kalınca üzerine çarpı işareti koyalım */}
+      {isDisabled && <div className="disabled-overlay">❌</div>}
     </div>
   );
 }

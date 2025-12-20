@@ -1,26 +1,28 @@
 // src/components/GameScreen.js
 import React, { useState, useEffect } from 'react';
 import ImageCard from './ImageCard';
-import { FaHome, FaClock, FaPlay } from 'react-icons/fa';
+import { FaHome, FaClock, FaPlay, FaLightbulb } from 'react-icons/fa';
 
-// --- GÖRSEL HAVUZU OLUŞTURMA ---
+// Örnek İpuçları
+const TIPS = [
+  "gölgelere dikkat et",
+  "Arka plandaki yansımalara bak.",
+  "yansımaların simetrisini kontrol et.",
+  "aşırı pürüzsüzlük yapay olabilir.",
+  "Gölgelerin ışık kaynağıyla uyumsuzluğuna bak."
+];
 
-// Yardımcı fonksiyon: Belirtilen sayı kadar resim yolunu diziye atar
-// Örn: createPathArray('ai', 3) -> ['/assets/ai/1.jpg', '/assets/ai/2.jpg', '/assets/ai/3.jpg']
 const createPathArray = (folder, count) => {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
-    src: `/assets/${folder}/${i + 1}.png`,
-    isAi: folder === 'ai' // Bu resmin AI olup olmadığını etiketliyoruz
+    src: `/assets/${folder}/${i + 1}.png`, 
+    isAi: folder === 'ai',
+    tip: folder === 'ai' ? TIPS[i % TIPS.length] : null 
   }));
 };
 
-// 100 tane AI, 50 tane Gerçek görsel olduğunu varsayıyoruz
-const AI_IMAGES = createPathArray('ai', 10);
+const AI_IMAGES = createPathArray('ai', 9); 
 const REAL_IMAGES = createPathArray('real', 24);
-
-// Tüm görselleri tek havuzda birleştiriyoruz (Şimdilik karıştırmadan)
-const ALL_IMAGES = [...AI_IMAGES, ...REAL_IMAGES];
 
 function GameScreen({ onGameEnd, onBackToMenu, mode }) {
   
@@ -30,20 +32,20 @@ function GameScreen({ onGameEnd, onBackToMenu, mode }) {
   const [gameActive, setGameActive] = useState(false);
   const [stats, setStats] = useState({ correct: 0, wrong: 0 });
   const [feedback, setFeedback] = useState("");
-  
-  // Ekranda gösterilecek 3 resim (State)
   const [currentRoundImages, setCurrentRoundImages] = useState([]);
+  
+  // --- YENİ STATE'LER ---
+  const [hasSecondChance, setHasSecondChance] = useState(false); // İkinci şans kullanıldı mı?
+  const [disabledCardId, setDisabledCardId] = useState(null); // Yanlış seçilen kartın ID'si
+  const [currentTip, setCurrentTip] = useState(null); // Gösterilecek ipucu
 
-  // --- OYUN BAŞLADIĞINDA VE TUR YENİLENDİĞİNDE ---
   useEffect(() => {
-    // Eğer mod Zamanla Yarış DEĞİLSE, sayfa açılır açılmaz resimleri yükle
     if (!isTimeAttack) {
       startNewRound();
     }
     // eslint-disable-next-line
   }, [isTimeAttack]);
 
-  // --- ZAMANLAYICI ---
   useEffect(() => {
     let interval = null;
     if (isTimeAttack && gameActive && timeLeft > 0) {
@@ -58,66 +60,73 @@ function GameScreen({ onGameEnd, onBackToMenu, mode }) {
     return () => clearInterval(interval);
   }, [gameActive, timeLeft, isTimeAttack, onGameEnd, stats]);
 
-
-  // --- YENİ TUR BAŞLATMA (Resim Seçme Mantığı) ---
   const startNewRound = () => {
-    // 1. Rastgele 1 tane AI görseli seç
     const randomAi = AI_IMAGES[Math.floor(Math.random() * AI_IMAGES.length)];
-    
-    // 2. Rastgele 2 tane Gerçek görsel seç
-    // (Aynı görselin gelmemesi için basit bir karıştırma yapıyoruz)
     const shuffledReal = [...REAL_IMAGES].sort(() => 0.5 - Math.random());
     const randomReal1 = shuffledReal[0];
     const randomReal2 = shuffledReal[1];
+    
+    // AI görseline ait ipucunu kaydet
+    setCurrentTip(randomAi.tip);
 
-    // 3. Bu üçünü birleştir ve karıştır (Ki AI hep başta çıkmasın)
     const roundImages = [randomAi, randomReal1, randomReal2].sort(() => 0.5 - Math.random());
     
     setCurrentRoundImages(roundImages);
+    
+    // Yeni turda her şeyi sıfırla
+    setHasSecondChance(false);
+    setDisabledCardId(null);
+    setFeedback("");
   };
 
-  // --- OYUNU BAŞLAT (Zamanla Yarış İçin) ---
   const handleStartTimer = () => {
     setGameActive(true);
     setStats({ correct: 0, wrong: 0 });
     setFeedback("");
-    startNewRound(); // İlk resimleri getir
+    startNewRound();
   };
 
-  // --- KART SEÇİMİ ---
+  // --- KART SEÇİM MANTIĞI (GÜNCELLENDİ) ---
   const handleCardClick = (selectedImage) => {
-    // Zamanla yarışta oyun başlamadıysa tıklanmasın
     if (isTimeAttack && !gameActive) return;
+    // Eğer tıklanan kart zaten devre dışıysa işlem yapma
+    if (disabledCardId === selectedImage.id && !selectedImage.isAi) return;
 
-    // --- DOĞRU/YANLIŞ KONTROLÜ ---
-    // Artık 'selectedImage.isAi' özelliği sayesinde gerçeği biliyoruz!
+    // --- DOĞRU CEVAP ---
     if (selectedImage.isAi) {
       setFeedback("✅ Doğru!");
       setStats(prev => ({ ...prev, correct: prev.correct + 1 }));
       
-      // Tek Atış moduysa hemen bitir
-      if (!isTimeAttack) {
-         setTimeout(() => onGameEnd(true), 500);
-         return; 
+      // Zamanla Yarış modundaysak hemen yeni tur
+      if (isTimeAttack) {
+        setTimeout(() => { startNewRound(); }, 500);
+      } 
+      // Tek Atış modundaysak oyunu bitir (Başarılı)
+      else {
+        setTimeout(() => onGameEnd(true), 500);
       }
-
-    } else {
-      setFeedback("❌ Yanlış!");
-      setStats(prev => ({ ...prev, wrong: prev.wrong + 1 }));
+    } 
+    
+    // --- YANLIŞ CEVAP ---
+    else {
+      // Eğer bu İLK yanlışsa ve mod Tek Atış ise -> İKİNCİ ŞANS VER
+      if (!hasSecondChance && !isTimeAttack) {
+        setHasSecondChance(true);
+        setDisabledCardId(selectedImage.id); // Bu kartı devre dışı bırak
+        setFeedback("⚠️ Yanlış! İpucuna bak ve tekrar dene.");
+      } 
       
-      // Tek Atış moduysa hemen bitir (Kaybettin)
-      if (!isTimeAttack) {
-        setTimeout(() => onGameEnd(false), 500);
-        return;
+      // Eğer ikinci şans da kullanıldıysa veya Zamanla Yarış modundaysak -> KAYBETTİN
+      else {
+        setFeedback("❌ Yanlış!");
+        setStats(prev => ({ ...prev, wrong: prev.wrong + 1 }));
+        
+        if (isTimeAttack) {
+          setTimeout(() => { startNewRound(); }, 500);
+        } else {
+          setTimeout(() => onGameEnd(false), 500);
+        }
       }
-    }
-
-    // Zamanla yarış modundaysak, yeni turu getir
-    if (isTimeAttack) {
-      setTimeout(() => {
-          setFeedback("");
-          startNewRound();
-      }, 500);
     }
   };
 
@@ -144,17 +153,16 @@ function GameScreen({ onGameEnd, onBackToMenu, mode }) {
         </div>
       )}
 
-      {/* Başlık sadece oyun aktif değilse veya mod Tek Atış ise görünsün */}
       {(!isTimeAttack || !gameActive) && <h1>{mode}</h1>}
       
       <div className={`game-container ${(!gameActive && isTimeAttack) ? 'blurred' : ''}`}>
-        {/* Resimler henüz yüklenmediyse boş div dönmesin diye kontrol */}
-        {currentRoundImages.length > 0 && currentRoundImages.map((imgObj, index) => (
+        {currentRoundImages.map((imgObj, index) => (
           <ImageCard 
             key={index} 
             imgSrc={imgObj.src} 
-            // Tıklayınca tüm resim objesini gönderiyoruz (ki isAi kontrolü yapabilelim)
-            onClick={() => handleCardClick(imgObj)} 
+            onClick={() => handleCardClick(imgObj)}
+            // Eğer bu kart devre dışı bırakılan kartsa, ona özel bir stil uygula
+            isDisabled={disabledCardId === imgObj.id && !imgObj.isAi}
           />
         ))}
       </div>
@@ -162,6 +170,13 @@ function GameScreen({ onGameEnd, onBackToMenu, mode }) {
       <div className="feedback-text">
         {feedback}
       </div>
+
+      {/* --- İPUCU KUTUSU (Sadece ikinci şans aktifse görünür) --- */}
+      {hasSecondChance && !isTimeAttack && (
+        <div className="tip-box">
+          <strong><FaLightbulb /> İpucu:</strong> {currentTip}
+        </div>
+      )}
 
     </div>
   );
