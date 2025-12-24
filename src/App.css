@@ -515,3 +515,45 @@ background-color: #007ACC; /* VS Code'un ikonik mavi rengi */
   align-items: center;
   gap: 5px;
 }
+/* src/App.css EN ALTA EKLE */
+
+/* İpucu Butonu (Zamanla Yarış Modu) */
+.hint-button {
+  margin-top: 15px;
+  background-color: #ffc107; /* Sarı renk */
+  color: #1e1e1e;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, background-color 0.2s;
+  box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+}
+
+.hint-button:hover {
+  background-color: #ffca28;
+  transform: translateY(-2px);
+}
+
+.hint-button:active {
+  transform: translateY(0);
+}
+
+/* İpucu Aktif Olduğunda Çıkan Yazı */
+.hint-text-active {
+  margin-top: 15px;
+  background-color: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid #ffc107;
+  font-size: 0.95rem;
+  animation: fadeIn 0.3s ease;
+  max-width: 90%;
+  text-align: center;
+}
