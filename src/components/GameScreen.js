@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import ImageCard from './ImageCard';
 import { FaHome, FaClock, FaPlay, FaLightbulb } from 'react-icons/fa';
-
+//zorunlu commit
 // --- İPUCU HAVUZU ---
 const TIPS = [
   "arka plandaki detaylara dikkat et.",
